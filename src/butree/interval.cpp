@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-const long *interval::data = NULL;
+uint64_t *interval::data = NULL;
 const double *interval::probs = NULL;
 
 double interval::init_lr(bool force_init) {

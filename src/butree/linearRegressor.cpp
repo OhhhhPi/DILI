@@ -15,7 +15,7 @@ void linearRegressor::copy_from(linearRegressor *rhs) {
     delta_x = rhs->delta_x;
 }
 
-void linearRegressor::init(long *_data, int left_start_idx, int start_idx, int fanout) {
+void linearRegressor::init(uint64_t *_data, int left_start_idx, int start_idx, int fanout) {
 
     a = 0;
     b = 0;
@@ -23,16 +23,16 @@ void linearRegressor::init(long *_data, int left_start_idx, int start_idx, int f
     _de_b = 0;
     sum_x = 0;
 //    sum_y = 0;
-    long *data = _data + start_idx;
-    long left_min = _data[left_start_idx];
-    long x_min = data[0];
+    uint64_t *data = _data + start_idx;
+    uint64_t left_min = _data[left_start_idx];
+    uint64_t x_min = data[0];
 
     delta_x = x_min - left_min;
     if (fanout <= 0) { return;}
 
 
     for (int i = 0; i < fanout; ++i) {
-        long x = data[i] - x_min;
+        uint64_t x = data[i] - x_min;
         _de_b += x * 1.0 * i;
         _nu_b += 1.0 * x * x;
         sum_x += x;
@@ -40,7 +40,7 @@ void linearRegressor::init(long *_data, int left_start_idx, int start_idx, int f
     cal_ab(fanout, x_min);
 }
 
-void linearRegressor::init_w_sampling(long *_data, int left_start_idx, int start_idx, int fanout) {
+void linearRegressor::init_w_sampling(uint64_t *_data, int left_start_idx, int start_idx, int fanout) {
 
     a = 0;
     b = 0;
@@ -48,9 +48,9 @@ void linearRegressor::init_w_sampling(long *_data, int left_start_idx, int start
     _de_b = 0;
     sum_x = 0;
 //    sum_y = 0;
-    long *data = _data + start_idx;
-    long left_min = _data[left_start_idx];
-    long x_min = data[0];
+    uint64_t *data = _data + start_idx;
+    uint64_t left_min = _data[left_start_idx];
+    uint64_t x_min = data[0];
 
     delta_x = x_min - left_min;
     if (fanout <= 0) { return;}
@@ -58,7 +58,7 @@ void linearRegressor::init_w_sampling(long *_data, int left_start_idx, int start
 
     int i = 0;
     for (int j = 0; j < fanout; j += sampling_factor) {
-        long x = data[j] - x_min;
+        uint64_t x = data[j] - x_min;
 
         _de_b += x * 1.0 * i;
         _nu_b += 1.0 * x * x;
@@ -69,7 +69,7 @@ void linearRegressor::init_w_sampling(long *_data, int left_start_idx, int start
 }
 
 
-void linearRegressor::cal_ab(int fanout, long x_min) {
+void linearRegressor::cal_ab(int fanout, uint64_t x_min) {
     double mean_x = sum_x / fanout;
     double mean_y = (fanout - 1) / 2.0;
     double de_b = _de_b - mean_x * mean_y * fanout;
@@ -83,7 +83,7 @@ void linearRegressor::cal_ab(int fanout, long x_min) {
     a = mean_y - b * (mean_x + x_min);
 }
 
-void linearRegressor::cal_ab_w_sampling(int fanout, long x_min) {
+void linearRegressor::cal_ab_w_sampling(int fanout, uint64_t x_min) {
     int n = fanout / sampling_factor;
 
     double mean_x = sum_x / n;
@@ -103,10 +103,10 @@ void linearRegressor::cal_ab_w_sampling(int fanout, long x_min) {
 }
 
 
-void linearRegressor::merge_and_self_update(linearRegressor *rhs, int left_fan, int right_fan, long x_min) {
+void linearRegressor::merge_and_self_update(linearRegressor *rhs, int left_fan, int right_fan, uint64_t x_min) {
     if (left_fan <= 0) {
         if (right_fan > 0) {
-            long dx = delta_x;
+            uint64_t dx = delta_x;
             copy_from(rhs);
             set_delta_x(dx);
         }
@@ -114,7 +114,7 @@ void linearRegressor::merge_and_self_update(linearRegressor *rhs, int left_fan, 
     }
 
     if (right_fan > 0) {
-        long dx = rhs->delta_x;
+        uint64_t dx = rhs->delta_x;
         double _relative_sum_x = rhs->sum_x + dx * right_fan;
         double _relative_de_b = rhs->_de_b + dx * 0.5 * right_fan * (right_fan - 1);
         double _relative_nu_b = rhs->_nu_b + 2.0 * dx * rhs->sum_x + right_fan * dx * dx;
@@ -128,7 +128,7 @@ void linearRegressor::merge_and_self_update(linearRegressor *rhs, int left_fan, 
 }
 
 /*
-void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left_fan, int right_fan, long x_min) {
+void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left_fan, int right_fan, uint64_t x_min) {
     if (left_fan <= 0) {
         if (right_fan > 0) {
             copy_from(rhs);
@@ -142,7 +142,7 @@ void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left
 
     if (right_fan > 0) {
         this->delta_x = lhs->delta_x;
-        long dx = rhs->delta_x;
+        uint64_t dx = rhs->delta_x;
         double _relative_sum_x = rhs->sum_x + dx * right_fan;
 //        double _relative_de_b = rhs->_de_b + dx * 0.5 * right_fan * (right_fan - 1);
         double _relative_de_b = rhs->_de_b + dx * 0.5 * right_fan * (right_fan - 1);
@@ -157,7 +157,7 @@ void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left
 */
 
 void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left_fan, int right_fan,
-                            long x_min) {
+                            uint64_t x_min) {
     if (left_fan <= 0) {
         if (right_fan > 0) {
             copy_from(rhs);
@@ -171,7 +171,7 @@ void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left
 
     if (right_fan > 0) {
         this->delta_x = lhs->delta_x;
-        long dx = rhs->delta_x;
+        uint64_t dx = rhs->delta_x;
         double _relative_sum_x = rhs->sum_x + dx * right_fan;
         double _relative_de_b = rhs->_de_b + dx * 0.5 * right_fan * (right_fan - 1);
         double _relative_nu_b = rhs->_nu_b + 2.0 * dx * rhs->sum_x + right_fan * dx * dx;
@@ -186,7 +186,7 @@ void linearRegressor::merge(linearRegressor *lhs, linearRegressor *rhs, int left
 
 
 void linearRegressor::merge_w_sampling(linearRegressor *lhs, linearRegressor *rhs, int left_fan, int right_fan,
-                                       long x_min) {
+                                       uint64_t x_min) {
     if (left_fan <= 0) {
         if (right_fan > 0) {
             copy_from(rhs);
@@ -202,7 +202,7 @@ void linearRegressor::merge_w_sampling(linearRegressor *lhs, linearRegressor *rh
     int right_n = right_fan >> 1;
     if (right_n > 0) {
         this->delta_x = lhs->delta_x;
-        long dx = rhs->delta_x;
+        uint64_t dx = rhs->delta_x;
         double _relative_sum_x = rhs->sum_x + dx * right_n;
         double _relative_de_b = rhs->_de_b + dx * 0.5 * right_n * (right_n - 1);
         double _relative_nu_b = rhs->_nu_b + 2.0 * dx * rhs->sum_x + right_n * dx * dx;
@@ -216,7 +216,7 @@ void linearRegressor::merge_w_sampling(linearRegressor *lhs, linearRegressor *rh
 
 
 
-double linearRegressor::cal_loss(long *data, int fanout) {
+double linearRegressor::cal_loss(uint64_t *data, int fanout) {
     double loss = 0;
     for (int i = 0; i < fanout; ++i) {
         double pred = a + b * data[i];
@@ -228,7 +228,7 @@ double linearRegressor::cal_loss(long *data, int fanout) {
     return loss;
 }
 
-double linearRegressor::cal_loss_w_sampling(long *data, int fanout) {
+double linearRegressor::cal_loss_w_sampling(uint64_t *data, int fanout) {
     double loss = 0;
     for (int i = 0; i < fanout; i += sampling_factor) {
         double pred = a + b * data[i];
@@ -260,13 +260,13 @@ void linearRegressor::print_cal_ab(int fanout) {
     printf("mean_x * mean_x * fanout = %.2lf\n", mean_x * mean_x * fanout);
 }
 
-void linearRegressor::print(long *data, int fanout) {
+void linearRegressor::print(uint64_t *data, int fanout) {
     printf("a = %.2lf, b = %.2lf, sum_x = %.2lf, _de_b = %.2lf, _nu_b = %.2lf\n", a, b, sum_x, _de_b, _nu_b);
 //    cout << "a = " << a << ", b = " << b << ", sum_x = " << sum_x << ", _de_b = " << _de_b << ", _nu_b = " << _nu_b << endl;
     if (data && fanout > 0) {
         print_cal_ab(fanout);
         for (int i = 0; i < fanout; ++i){
-            long x = data[i];
+            uint64_t x = data[i];
             double pred = a + b * x;
             cout << "x = " << x << ", pred = " << pred << endl;
         }

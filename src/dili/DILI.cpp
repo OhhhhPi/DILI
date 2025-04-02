@@ -135,7 +135,7 @@ void DILI::load(const string &path) {
 
 void DILI::bulk_load(const keyArray &keys, const recordPtrArray &ptrs, long n_keys) { //}, const string &mirror_dir, const string &layout_conf_path, int interval_type) {
     const int interval_type = 1;
-    l_matrix mirror;
+    uint64_matrix mirror;
     build_ideal_mirror(keys, nullptr, n_keys, mirror, mirror_dir, interval_type);
 //    build_mirror(keys, nullptr, n_keys, mirror, mirror_dir, interval_type);
 

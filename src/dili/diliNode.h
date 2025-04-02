@@ -161,11 +161,11 @@ struct diliNode{
             assert(num_nonempty == 0);
             for (int i = 0; i < fanout; ++i) {
                 pairEntry &pe = pe_data[i];
-                if (pe.key >= 0) {
+                if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                     ++num_nonempty;
-                } else if (pe.key == -1) {
+                } else if (pe.key == static_cast<uint64_t>(-1)) {
                     num_nonempty += pe.child->cal_num_nonempty();
-                } else if (pe.key == -2) {
+                } else if (pe.key == static_cast<uint64_t>(-2)) {
                     num_nonempty += 2;
                 }
             }
@@ -178,7 +178,7 @@ struct diliNode{
         last_nn = num_nonempty;
         for (int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->init_after_bulk_load();
             }
         }
@@ -191,7 +191,7 @@ struct diliNode{
         }
         for (int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->check_num_nonempty();
             }
         }
@@ -206,10 +206,10 @@ struct diliNode{
         if (pe.key == key) {
             return pe.ptr;
         }
-        if (pe.key == -1) {
+        if (pe.key == static_cast<uint64_t>(-1)) {
             return pe.child->leaf_find(key);
         }
-        if (pe.key == -2) {
+        if (pe.key == static_cast<uint64_t>(-2)) {
             fan2Leaf *child = pe.fan2child;
             if (child->k1 == key) {
                 return child->p1;
@@ -226,9 +226,9 @@ struct diliNode{
         int j = 0;
         int pred = LR_PRED(a, b, k1, fanout);
         pairEntry &first_pe = pe_data[pred];
-        if (first_pe.key == -1) {
+        if (first_pe.key == static_cast<uint64_t>(-1)) {
             j = first_pe.child->range_query_from(k1, results);
-        } else if (first_pe.key == -2) {
+        } else if (first_pe.key == static_cast<uint64_t>(-2)) {
             fan2Leaf *fan2child = first_pe.fan2child;
             keyType _k1 = fan2child->k1;
             keyType _k2 = fan2child->k2;
@@ -244,12 +244,12 @@ struct diliNode{
 
         for(int i = pred + 1; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key >= 0) {
+            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
-            } else if (pe.key == -1) {
+            } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
                 j += pe.child->num_nonempty;
-            } else if (pe.key == -2) {
+            } else if (pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = pe.fan2child;
                 results[j++] = fan2child->p1;
                 results[j++] = fan2child->p2;
@@ -264,12 +264,12 @@ struct diliNode{
         int pred = LR_PRED(a, b, k2, fanout);
         for(int i = 0; i < pred; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key >= 0) {
+            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
-            } else if (pe.key == -1) {
+            } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
                 j += pe.child->num_nonempty;
-            } else if (pe.key == -2) {
+            } else if (pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = pe.fan2child;
                 results[j++] = fan2child->p1;
                 results[j++] = fan2child->p2;
@@ -277,9 +277,9 @@ struct diliNode{
         }
 
         pairEntry &pe = pe_data[pred];
-        if (pe.key == -1) {
+        if (pe.key == static_cast<uint64_t>(-1)) {
             j += pe.child->range_query_to(k2, results+j);
-        } else if (pe.key == -2) {
+        } else if (pe.key == static_cast<uint64_t>(-2)) {
             fan2Leaf *fan2child = pe.fan2child;
             keyType _k1 = fan2child->k1;
             keyType _k2 = fan2child->k2;
@@ -300,12 +300,12 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key >= 0) {
+            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
-            } else if (pe.key == -1) {
+            } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
                 j += pe.child->num_nonempty;
-            } else if (pe.key == -2) {
+            } else if (pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = pe.fan2child;
                 results[j++] = fan2child->p1;
                 results[j++] = fan2child->p2;
@@ -320,9 +320,9 @@ struct diliNode{
 
         if (pred1 == pred2) {
             pairEntry &pe = pe_data[pred1];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 return pe.child->range_query(k1, k2, results);
-            } else if (pe.key == -2) {
+            } else if (pe.key == static_cast<uint64_t>(-2)) {
                 int n = 0;
                 fan2Leaf *leaf = pe.fan2child;
                 keyType _k1 = leaf->k1;
@@ -342,9 +342,9 @@ struct diliNode{
 
             pairEntry &first_pe = pe_data[pred1];
             int n = 0;
-            if (first_pe.key == -1) {
+            if (first_pe.key == static_cast<uint64_t>(-1)) {
                 n = first_pe.child->range_query_from(k1, results);
-            } else if (first_pe.key == -2) {
+            } else if (first_pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *leaf = first_pe.fan2child;
                 keyType _k1 = leaf->k1;
                 keyType _k2 = leaf->k2;
@@ -363,10 +363,10 @@ struct diliNode{
 
             for (int i = pred1 + 1; i < pred2; ++i) {
                 pairEntry &pe = pe_data[i];
-                if (pe.key == -1) {
+                if (pe.key == static_cast<uint64_t>(-1)) {
                     pe.child->collect_all_ptrs(results+n);
                     n += pe.child->num_nonempty;
-                } else if (pe.key == -2) {
+                } else if (pe.key == static_cast<uint64_t>(-2)) {
                     fan2Leaf *leaf = pe.fan2child;
                     results[n++] = leaf->p1;
                     results[n++] = leaf->p2;
@@ -376,9 +376,9 @@ struct diliNode{
             }
 
             pairEntry &final_pe = pe_data[pred2];
-            if (final_pe.key == -1) {
+            if (final_pe.key == static_cast<uint64_t>(-1)) {
                 n += final_pe.child->range_query_to(k2, results+n);
-            } else if (final_pe.key == -2) {
+            } else if (final_pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *leaf = final_pe.fan2child;
                 keyType _k1 = leaf->k1;
                 keyType _k2 = leaf->k2;
@@ -414,9 +414,11 @@ struct diliNode{
         int pos1 = LR_PRED(a, b, k1, fanout);
         int pos2 = LR_PRED(a, b, k2, fanout);
         pe_data[pos0].assign(k0, p0);
-        pe_data[pos1].assign(k1, p1);
-        pe_data[pos2].assign(k2, p2);
-        assert(pos0 < pos1 && pos1 < pos2);
+        this->insert(k1, p1);
+        this->insert(k2, p2);
+        // pe_data[pos1].assign(k1, p1);
+        // pe_data[pos2].assign(k2, p2);
+        // assert(pos0 < pos1 && pos1 < pos2);
         total_n_travs = 3;
         avg_n_travs_since_last_dist = 1;
     }
@@ -434,9 +436,20 @@ struct diliNode{
         int pos2 = LR_PRED(a, b, k2, fanout);
 
         pe_data[pos0].assign(k0, _ptrs[0]);
-        pe_data[pos1].assign(k1, _ptrs[1]);
-        pe_data[pos2].assign(k2, _ptrs[2]);
-        assert(pos0 < pos1 && pos1 < pos2);
+        // when keys are big(uint64), and close, they will be assigned to the same position
+        // k0 = 42260847579309853, k1 = 42260849165525997, k2 = 42260849458789473
+        // for example, pos0 = 5, pos1 = 5, pos2 = 5
+        // Assertion `pos0 < pos1 && pos1 < pos2' failed.
+        
+        this->insert(k1, _ptrs[1]);
+        this->insert(k2, _ptrs[2]);
+        // pe_data[pos1].assign(k1, _ptrs[1]);
+        // pe_data[pos2].assign(k2, _ptrs[2]);
+        // if(pos0 == pos1 || pos1 >= pos2) {
+        //     cout << "pos0 = " << pos0 << ", pos1 = " << pos1 << ", pos2 = " << pos2 << endl;
+        //     cout << "k0 = " << k0 << ", k1 = " << k1 << ", k2 = " << k2 << endl;
+        // }
+        // assert(pos0 < pos1 && pos1 < pos2);
         total_n_travs = 3;
         avg_n_travs_since_last_dist = 1;
     }
@@ -465,10 +478,10 @@ struct diliNode{
             long c_total_fan = 0;
             long c_n_empty_slots = 0;
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->num_nonempty_stats(cn0, cn1, cn2, cn, c_total_fan, c_n_empty_slots);
             }
-            if (pe.key < -2) {
+            if (pe.key == static_cast<uint64_t>(-3)) {
                 ++n_empty_slos;
             }
             n0 += cn0;
@@ -485,7 +498,7 @@ struct diliNode{
         if (pe_data) {
             if (fanout > 0) {
                 for (int i = 0; i < fanout; ++i) {
-                    if (pe_data[i].key == -1) {
+                    if (pe_data[i].key == static_cast<uint64_t>(-1)) {
                         diliNode *child = pe_data[i].child;
                         delete child;
                     }
@@ -518,11 +531,11 @@ struct diliNode{
             pairEntry &pe = pe_data[i];
             keyType key = pe.key;
             fwrite(&(key), sizeof(keyType),1, fp);
-            if (key >= 0) {
+            if (key != static_cast<uint64_t>(-1) || key != static_cast<uint64_t>(-2) || key != static_cast<uint64_t>(-3)) {
                 fwrite(&(pe.ptr), sizeof(recordPtr),1, fp);
-            } else if (key == -1){
+            } else if (key == static_cast<uint64_t>(-1)){
                 pe.child->save(fp);
-            } else if (key == -2) {
+            } else if (key == static_cast<uint64_t>(-2)) {
                 pe.fan2child->save(fp);
             }
         }
@@ -555,14 +568,14 @@ struct diliNode{
         recordPtr ptr = 0;
         for (int i = 0; i < fanout; ++i) {
             fread(&key, sizeof(keyType), 1, fp);
-            if (key >= 0) {
+            if (key != static_cast<uint64_t>(-1) || key != static_cast<uint64_t>(-2) || key != static_cast<uint64_t>(-3)) {
                 fread(&ptr, sizeof(recordPtr), 1, fp);
                 pe_data[i].assign(key, ptr);
-            } else if (key == -1){
+            } else if (key == static_cast<uint64_t>(-1)){
                 diliNode *child = new diliNode(false);
                 child->load(fp);
                 pe_data[i].setChild(child);
-            } else if (key == -2) {
+            } else if (key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = new fan2Leaf;
                 fan2child->load(fp);
                 pe_data[i].setFan2Child(fan2child);
@@ -607,14 +620,14 @@ struct diliNode{
             if (!is_internal() && num_nonempty == 0) {
                 cout << "i = " << i << ", fan = " << fanout << ", pe.key = " << pe.key << endl;
             }
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
                 child->trim();
             }
         }
         for (int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
                 assert(long(child) != -3l);
                 assert(child->fanout >= 1);
@@ -634,7 +647,7 @@ struct diliNode{
     void simplify() {
         for (int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
                 if (child->num_nonempty == 2) {
                     pairEntry &cpe = child->pe_data[0];
@@ -654,12 +667,13 @@ struct diliNode{
         }
     }
 
-    void bulk_loading(const keyType *keys, const recordPtr *ptrs, bool print) {
+    void bulk_loading(const keyType *keys, const recordPtr *ptrs, bool print = true) {
         if (num_nonempty == 0) {
             fanout = 2;
             total_n_travs = 0;
             return;
         } else {
+            // determine fanout (2 or keyNum * 2)
             init();
 
             assert(fanout > 0);
@@ -789,7 +803,7 @@ struct diliNode{
         }
         for (int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key == -1) {
+            if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->cal_avg_n_travs();
             }
         }
@@ -802,7 +816,7 @@ struct diliNode{
 //    if (print) {
 //        cout << "_key = " << _key << ", pe.key = " << pe.key << ", fanout = " << fanout << ", pred = " << pred << ", num_nonempty = " << num_nonempty << endl;
 //    }
-        if (pe.key < -2) {
+        if (pe.key == static_cast<uint64_t>(-3)) {
             pe.assign(_key, _ptr);
             ++num_nonempty;
             ++total_n_travs;
@@ -810,7 +824,7 @@ struct diliNode{
                 set_int_flag();
             }
             return true;
-        } else if (pe.key == -1) {
+        } else if (pe.key == static_cast<uint64_t>(-1)) {
             diliNode *child = pe.child;
             long child_last_total_n_travs = child->total_n_travs;
             bool if_inserted = child->insert(_key, _ptr);
@@ -833,7 +847,7 @@ struct diliNode{
             }
 #endif
             return if_inserted;
-        } else if (pe.key == -2) {
+        } else if (pe.key == static_cast<uint64_t>(-2)) {
             total_n_travs += 2;
             fan2Leaf *fan2child = pe.fan2child;
             keyType k1 = fan2child->k1;
@@ -895,7 +909,7 @@ struct diliNode{
             --total_n_travs;
             return num_nonempty;
         }
-        else if (pe.key == -2) {
+        else if (pe.key == static_cast<uint64_t>(-2)) {
             fan2Leaf *fan2child = pe.fan2child;
             if (fan2child->k1 == _key) {
                 pe.assign(fan2child->k2, fan2child->p2);
@@ -912,7 +926,7 @@ struct diliNode{
             } else {
                 return -1;
             }
-        } else if (pe.key == -1) {
+        } else if (pe.key == static_cast<uint64_t>(-1)) {
             diliNode *child = pe.child;
             long child_n_travs = child->total_n_travs;
             int flag = child->erase(_key);
@@ -943,7 +957,7 @@ struct diliNode{
             --total_n_travs;
             return num_nonempty;
         }
-        else if (pe.key == -2) {
+        else if (pe.key == static_cast<uint64_t>(-2)) {
             fan2Leaf *fan2child = pe.fan2child;
             if (fan2child->k1 == _key) {
                 ptr = fan2child->p1;
@@ -962,7 +976,7 @@ struct diliNode{
             } else {
                 return -1;
             }
-        } else if (pe.key == -1) {
+        } else if (pe.key == static_cast<uint64_t>(-1)) {
             diliNode *child = pe.child;
             long child_n_travs = child->total_n_travs;
             int flag = child->erase_and_get_ptr(_key, ptr);
@@ -989,16 +1003,16 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key >= 0) {
+            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                 keys[j] = pe.key;
                 ptrs[j++] = pe.ptr;
-            } else if (pe.key == -1) {
+            } else if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
                 child->collect_and_clear(keys+j, ptrs+j);
                 j += child->num_nonempty;
                 delete child;
             }
-            else if (pe.key == -2) {
+            else if (pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = pe.fan2child;
                 keys[j] = fan2child->k1;
                 ptrs[j++] = fan2child->p1;
@@ -1016,13 +1030,13 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key >= 0) {
+            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                 keys[j++] = pe.key;
-            } else if (pe.key == -1) {
+            } else if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
                 child->collect_all_keys(keys+j);
                 j += child->num_nonempty;
-            } else if (pe.key == -2) {
+            } else if (pe.key == static_cast<uint64_t>(-2)) {
                 fan2Leaf *fan2child = pe.fan2child;
                 keys[j++] = fan2child->k1;
                 keys[j++] = fan2child->k2;
@@ -1032,14 +1046,14 @@ struct diliNode{
             cout << "j = " << j << ", num_nonempty = " << num_nonempty << ", is_internal = " << is_internal() << endl;
             for(int i = 0; i < num_nonempty; ++i) {
                 pairEntry &pe = pe_data[i];
-                if (pe.key >= 0) {
+                if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
                     cout << "i = " << i << ", pe.key = " << pe.key << endl;
-                } else if (pe.key == -1) {
+                } else if (pe.key == static_cast<uint64_t>(-1)) {
                     diliNode *child = pe.child;
                     child->collect_all_keys(keys+j);
                     cout << "i = " << i << ", child.num_nonempty = " << child->num_nonempty << endl;
                     j += child->num_nonempty;
-                } else if (pe.key == -2) {
+                } else if (pe.key == static_cast<uint64_t>(-2)) {
                     fan2Leaf *fan2child = pe.fan2child;
                     cout << "i = " << i << ", fan2child.num_nonempty = 2" << endl;
                     keys[j++] = fan2child->k1;

@@ -12,11 +12,13 @@ typedef std::vector<int> intVec;
 typedef std::vector<double> doubleVec;
 typedef std::vector<long> longVec;
 typedef std::vector<double> d_vector;
+typedef std::vector<uint64_t> uint64Vec;
 typedef std::vector< std::vector<double> > d_matrix;
 typedef std::vector< std::vector<long> > l_matrix;
 typedef std::vector< std::vector<int> > i_matrix;
-typedef long recordPtr;
-typedef long keyType;
+typedef std::vector< std::vector<uint64_t> > uint64_matrix;
+typedef uint64_t recordPtr;
+typedef uint64_t keyType;
 typedef long recordContent;
 
 typedef std::unique_ptr<int []> int32Array;

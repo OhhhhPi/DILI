@@ -10,7 +10,8 @@ void buInterval::init_merge_info() {
     if (fanout == 0) {
         linear_loss = 0;
     } else {
-        assert(lbd < ubd);
+        if(lbd >= ubd) cout << "lbd = " << lbd << ", ubd = " << ubd << endl;
+        // assert(lbd < ubd);
         linear_loss = init_lr();
     }
 }

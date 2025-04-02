@@ -32,7 +32,7 @@ namespace data_utils {
 
     long load_data_to_uptr(const char *path, DATA_FLAG flag=DATA_FLAG::INT64_FLAG);
     long load_data(const char *path, void *data, DATA_FLAG flag=DATA_FLAG::INT64_FLAG);
-    long load_data_pair(const char *data_path, std::pair<long, long> *_data);
+    long load_data_pair(const char *data_path, std::pair<uint64_t, uint64_t> *_data);
 
     template<typename T>
     long load_vec_data(const char *data_path, std::vector<T> &vec_data) {
@@ -61,7 +61,7 @@ namespace data_utils {
         return act_data_size;
     }
 
-    void save_data_pair(const char *data_path, std::pair<long, long> *_data, long data_size);
+    void save_data_pair(const char *data_path, std::pair<uint64_t, uint64_t> *_data, long data_size);
 
     void save_data(const char *data_path, void *data, long data_size, DATA_FLAG flag=DATA_FLAG::INT64_FLAG);
 
@@ -145,7 +145,7 @@ namespace data_utils {
     void save_mat_data_double(const char *data_path, const d_matrix &d_mat);
 
 
-    void scale_sorted_data(long *sorted_data, long data_size, long min_val, long max_val, bool allow_repeat=false);
+    void scale_sorted_data(uint64_t *sorted_data, long data_size, uint64_t min_val, uint64_t max_val, bool allow_repeat=false);
 
     template<typename T>
     T cal_min_diff(T *data, long n) {
@@ -220,7 +220,7 @@ namespace data_utils {
     }
 
 
-    inline int array_lower_bound(long *data, double x, int l, int r) {
+    inline int array_lower_bound(uint64_t *data, double x, int l, int r) {
         while (l < r) {
             int mid = (l + r) >> 1;
 //        int mid = l + ((r - l) >> 1);
@@ -234,9 +234,9 @@ namespace data_utils {
         return l;
     }
 
-    void check(long *keys, long len);
+    void check(uint64_t *keys, long len);
 
-    void generate_data_descs(long *data, long n, const std::string &desc_path, const std::string &meta_info);
+    void generate_data_descs(uint64_t *data, long n, const std::string &desc_path, const std::string &meta_info);
 }
 
 

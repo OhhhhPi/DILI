@@ -69,13 +69,13 @@ public:
 
     void set_mirror_dir(const std::string &dir) { mirror_dir = dir; }
 
-    void build_from_mirror(l_matrix &mirror, const keyArray &all_keys, const recordPtrArray &all_ptrs, long N) {
+    void build_from_mirror(uint64_matrix &mirror, const keyArray &all_keys, const recordPtrArray &all_ptrs, long N) {
         size_t H = mirror.size();
 
 //        cout << "+++H = " << H << endl;
         intVec n_nodes_each_level;
         intVec n_nodes_each_level_mirror;
-        for (longVec &lv : mirror) {
+        for (uint64Vec &lv : mirror) {
             n_nodes_each_level_mirror.push_back(lv.size());
         }
 
@@ -83,10 +83,10 @@ public:
         split_keys_list[0] = all_keys.get();
 
         for (int height = H - 1; height > 0; --height) {
-            longVec &lv = mirror[height-1];
+            uint64Vec &lv = mirror[height-1];
             int n_split_keys = lv.size();
 
-            long *split_keys = new long[n_split_keys + 1];
+            uint64_t *split_keys = new uint64_t[n_split_keys + 1];
             std::copy(lv.begin(), lv.end(), split_keys);
             split_keys[n_split_keys] = all_keys[N-1] + 1;
 
@@ -144,7 +144,7 @@ public:
             n_nodes_each_level.push_back(act_total_N_children);
         }
 
-        for (int height = 1; height < H; ++height) {
+        for (int height = 1; height < static_cast<int>(H); ++height) {
             delete[] split_keys_list[height];
         }
         delete[] split_keys_list;
@@ -194,14 +194,13 @@ public:
             } else {
                 for (int i = 0; i < node->fanout; ++i) {
                     pairEntry &kp = node->pe_data[i];
-                    if (kp.key < 0) {
-                        if (kp.key == -1) {
-                            s.push(kp.child);
-                            size += sizeof(long);
-                        } else if (kp.key == -2) {
-                            size += (delta + 5 * sizeof(long));
-                        }
-                    } else {
+                    
+                    if (kp.key == static_cast<uint64_t>(-1)) {
+                        s.push(kp.child);
+                        size += sizeof(long);
+                    } else if (kp.key == static_cast<uint64_t>(-2)) {
+                        size += (delta + 5 * sizeof(long));
+                    } else if (kp.key != static_cast<uint64_t>(-3)) {
                         size += 2 * sizeof(long);
                     }
                 }
@@ -255,9 +254,9 @@ public:
             pairEntry &kp = node->pe_data[pred];
             if (kp.key == key) {
                 return kp.ptr;
-            } else if (kp.key == -1) {
+            } else if (kp.key == static_cast<uint64_t>(-1)) {
                 node = kp.child;
-            } else if (kp.key == -2) {
+            } else if (kp.key ==  static_cast<uint64_t>(-2)) {
                 fan2Leaf *child = kp.fan2child;
                 if (child->k1 == key) {
                     return child->p1;

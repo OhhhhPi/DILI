@@ -259,7 +259,7 @@ namespace data_utils {
 
     }
 
-    void scale_sorted_data(long *sorted_data, long data_size, long min_val, long max_val, bool allow_repeat) {
+    void scale_sorted_data(uint64_t *sorted_data, long data_size, long min_val, long max_val, bool allow_repeat) {
         if (!allow_repeat) {
             long offset = 0;
             for (long i = 1; i < data_size; ++i) {
@@ -287,7 +287,7 @@ namespace data_utils {
     }
 
 
-    void check(long *keys, long len) {
+    void check(uint64_t *keys, long len) {
         for (int i = 0; i < len - 1; ++i) {
             if (keys[i] >= keys[i+1]) {
                 cout << "i = " << i << ", keys[i] = " << keys[i] << ", keys[i+1] = " << keys[i+1] << endl;

@@ -35,17 +35,17 @@ typedef std::set<interval*, interval_comparator> interval_set;
 
 typedef std::priority_queue< dl_pair, std::vector<dl_pair>, pair_max_comparator > pair_max_heap;
 
-// longVec &complete_borders,
-void get_complete_partition_borders(const keyArray X, const doubleArray &probs, long N, int h, long min_border_size, longVec &complete_borders, doubleVec &complete_avg_rmses, int interval_type=0);
-//void get_complete_partition_borders(long *X, double *probs, long N, int h, long min_border_size, longVec &complete_borders, int interval_type=0);
+// uint64Vec &complete_borders,
+void get_complete_partition_borders(const keyArray X, const doubleArray &probs, long N, int h, long min_border_size, uint64Vec &complete_borders, doubleVec &complete_avg_rmses, int interval_type=0);
+//void get_complete_partition_borders(long *X, double *probs, long N, int h, long min_border_size, uint64Vec &complete_borders, int interval_type=0);
 
-void build_mirror(const keyArray &X, const doubleArray &probs, long N, l_matrix &mirror, const std::string &mirror_dir, int interval_type);
-void build_ideal_mirror(const keyArray &X, const doubleArray &probs, long N, l_matrix &mirror, const std::string &mirror_dir, int interval_type);
-void build_mirror_from_given_layout(const keyArray &X, const doubleArray &probs, long N, l_matrix &mirror, const std::string &mirror_dir, const longVec &layout, int interval_type = 0);
+void build_mirror(const keyArray &X, const doubleArray &probs, long N, uint64_matrix &mirror, const std::string &mirror_dir, int interval_type);
+void build_ideal_mirror(const keyArray &X, const doubleArray &probs, long N, uint64_matrix &mirror, const std::string &mirror_dir, int interval_type);
+void build_mirror_from_given_layout(const keyArray &X, const doubleArray &probs, long N, uint64_matrix &mirror, const std::string &mirror_dir, const uint64Vec &layout, int interval_type = 0);
 
-void restore_mirror(const std::string &mirror_dir, l_matrix &mirror, bool ideal=false);
-bool restore_complete_borders(const std::string &mirror_dir, const int h, longVec &borders);
-bool restore_complete_borders_and_losses(const std::string &mirror_dir, const int h, longVec &borders, doubleVec &losses);
+void restore_mirror(const std::string &mirror_dir, uint64_matrix &mirror, bool ideal=false);
+bool restore_complete_borders(const std::string &mirror_dir, const int h, uint64Vec &borders);
+bool restore_complete_borders_and_losses(const std::string &mirror_dir, const int h, uint64Vec &borders, doubleVec &losses);
 
 inline int find_nearest(long N, long n_nodes, long next_n_nodes) {
     return 1.0 * N * next_n_nodes / n_nodes;

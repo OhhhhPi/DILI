@@ -7,13 +7,13 @@
 #define DILI_INTERVAL_H
 
 struct interval{
-    static const keyType *data;
+    static keyType *data;
     static const double *probs;
 
     bool valid;
     int fanout;
-    long lbd;
-    long ubd; // lbd < x <= ubd
+    uint64_t lbd;
+    uint64_t ubd; // lbd < x <= ubd
 //    double rj;
 //    double tj;
 
