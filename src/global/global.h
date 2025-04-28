@@ -5,7 +5,7 @@
 #ifndef DILI_GLOBAL_H
 #define DILI_GLOBAL_H
 
-#define LR_PRED(a, b, key, fanout) std::min<int>(std::max<int>(static_cast<int>(a + b * key), 0), fanout - 1)
+#define LR_PRED(a, b, key, fanout) std::min<uint64_t>(std::max<uint64_t>(static_cast<uint64_t>(a + b * key), 0), fanout - 1)
 //inline int LR_PRED(double a, double b, const long &key, int fanout) { return std::min<int>(std::max<int>(a + b * key, 0), fanout - 1); }
 #define MIN_INT(a, b) std::min<int>(a, b)
 #define MAX_INT(a, b) std::max<int>(a, b)
@@ -15,6 +15,7 @@
 
 #define MIN_DOUBLE(a, b) std::min<double>(a, b)
 #define MAX_DOUBLE(a, b) std::max<double>(a, b)
+#define MAX_LONG_DOUBLE(a, b) std::max<long double>(a, b)
 
 
 extern long totalDataSize;

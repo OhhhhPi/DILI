@@ -27,17 +27,17 @@ namespace dili_auxiliary {
 }
 
 
-inline void linearReg_w_simple_strategy(const keyType *X, double &a, double &b, int n) {
+inline void linearReg_w_simple_strategy(const keyType *X, long double &a, long double &b, int n) {
     int left_n = n / 2;
     int right_n = n - left_n - 1;
     keyType x_middle = X[left_n];
-    double left_slope = 1.0 * left_n / (x_middle - X[0]);
-    double right_slope = 1.0 * right_n / (X[n-1] - x_middle);
-    b = MAX_DOUBLE(left_slope, right_slope);
+    long double left_slope = 1.0 * left_n / (x_middle - X[0]);
+    long double right_slope = 1.0 * right_n / (X[n-1] - x_middle);
+    b = MAX_LONG_DOUBLE(left_slope, right_slope);
     a = -b * x_middle + left_n;
 }
 
-inline void linearReg_at_least_four(const keyType *X, double &a, double &b, int n) {
+inline void linearReg_at_least_four(const keyType *X, long double &a, long double &b, int n) {
     double nu_b = 0;
     double de_b = 0;
     double mean_x = 0;
@@ -60,10 +60,10 @@ inline void linearReg_at_least_four(const keyType *X, double &a, double &b, int 
     a = mean_y - b * mean_x;
 }
 
-inline void linearReg_with_max_b(const keyType *X, double &a, double &b, int n) {
-    double nu_b = 0;
-    double de_b = 0;
-    double mean_x = 0;
+inline void linearReg_with_max_b(const keyType *X, long double &a, long double &b, int n) {
+    long double nu_b = 0;
+    long double de_b = 0;
+    long double mean_x = 0;
     for (int i = 0; i < n; ++i) {
         de_b += X[i] * 1.0 * i;
         nu_b += X[i] * 1.0 * X[i];
@@ -71,7 +71,7 @@ inline void linearReg_with_max_b(const keyType *X, double &a, double &b, int n) 
     }
 
     mean_x /= n;
-    double mean_y = (n - 1) / 2.0;
+    long double mean_y = (n - 1) / 2.0;
     de_b -= mean_x * mean_y * n;
     nu_b -= mean_x * mean_x * n;
 
@@ -84,7 +84,7 @@ inline void linearReg_with_max_b(const keyType *X, double &a, double &b, int n) 
 }
 
 
-inline void linearReg_w_expanding(const keyType *X, double &a, double &b, int n, int expanded_n, bool use_simple_strategy) {
+inline void linearReg_w_expanding(const keyType *X, long double &a, long double &b, int n, int expanded_n, bool use_simple_strategy) {
     if (!use_simple_strategy) {
 //        linearReg_at_least_four(X, a, b, n);
         linearReg_with_max_b(X, a, b, n);
@@ -101,8 +101,8 @@ inline void linearReg_w_expanding(const keyType *X, double &a, double &b, int n,
 struct diliNode{
     int fanout;
     int meta_info;
-    double a;
-    double b;
+    long double a;
+    long double b;
     int num_nonempty;
 
     pairEntry *pe_data;
@@ -161,7 +161,7 @@ struct diliNode{
             assert(num_nonempty == 0);
             for (int i = 0; i < fanout; ++i) {
                 pairEntry &pe = pe_data[i];
-                if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+                if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                     ++num_nonempty;
                 } else if (pe.key == static_cast<uint64_t>(-1)) {
                     num_nonempty += pe.child->cal_num_nonempty();
@@ -244,7 +244,7 @@ struct diliNode{
 
         for(int i = pred + 1; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+            if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
             } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
@@ -264,7 +264,7 @@ struct diliNode{
         int pred = LR_PRED(a, b, k2, fanout);
         for(int i = 0; i < pred; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+            if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
             } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
@@ -300,7 +300,7 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+            if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                 results[j++] = pe.ptr;
             } else if (pe.key == static_cast<uint64_t>(-1)) {
                 pe.child->collect_all_ptrs(results+j);
@@ -414,11 +414,9 @@ struct diliNode{
         int pos1 = LR_PRED(a, b, k1, fanout);
         int pos2 = LR_PRED(a, b, k2, fanout);
         pe_data[pos0].assign(k0, p0);
-        this->insert(k1, p1);
-        this->insert(k2, p2);
-        // pe_data[pos1].assign(k1, p1);
-        // pe_data[pos2].assign(k2, p2);
-        // assert(pos0 < pos1 && pos1 < pos2);
+        pe_data[pos1].assign(k1, p1);
+        pe_data[pos2].assign(k2, p2);
+        assert(pos0 < pos1 && pos1 < pos2);
         total_n_travs = 3;
         avg_n_travs_since_last_dist = 1;
     }
@@ -436,20 +434,10 @@ struct diliNode{
         int pos2 = LR_PRED(a, b, k2, fanout);
 
         pe_data[pos0].assign(k0, _ptrs[0]);
-        // when keys are big(uint64), and close, they will be assigned to the same position
-        // k0 = 42260847579309853, k1 = 42260849165525997, k2 = 42260849458789473
-        // for example, pos0 = 5, pos1 = 5, pos2 = 5
-        // Assertion `pos0 < pos1 && pos1 < pos2' failed.
+        pe_data[pos1].assign(k1, _ptrs[1]);
+        pe_data[pos2].assign(k2, _ptrs[2]);
         
-        this->insert(k1, _ptrs[1]);
-        this->insert(k2, _ptrs[2]);
-        // pe_data[pos1].assign(k1, _ptrs[1]);
-        // pe_data[pos2].assign(k2, _ptrs[2]);
-        // if(pos0 == pos1 || pos1 >= pos2) {
-        //     cout << "pos0 = " << pos0 << ", pos1 = " << pos1 << ", pos2 = " << pos2 << endl;
-        //     cout << "k0 = " << k0 << ", k1 = " << k1 << ", k2 = " << k2 << endl;
-        // }
-        // assert(pos0 < pos1 && pos1 < pos2);
+        assert(pos0 < pos1 && pos1 < pos2);
         total_n_travs = 3;
         avg_n_travs_since_last_dist = 1;
     }
@@ -531,7 +519,7 @@ struct diliNode{
             pairEntry &pe = pe_data[i];
             keyType key = pe.key;
             fwrite(&(key), sizeof(keyType),1, fp);
-            if (key != static_cast<uint64_t>(-1) || key != static_cast<uint64_t>(-2) || key != static_cast<uint64_t>(-3)) {
+            if (key != static_cast<uint64_t>(-1) && key != static_cast<uint64_t>(-2) && key != static_cast<uint64_t>(-3)) {
                 fwrite(&(pe.ptr), sizeof(recordPtr),1, fp);
             } else if (key == static_cast<uint64_t>(-1)){
                 pe.child->save(fp);
@@ -568,7 +556,7 @@ struct diliNode{
         recordPtr ptr = 0;
         for (int i = 0; i < fanout; ++i) {
             fread(&key, sizeof(keyType), 1, fp);
-            if (key != static_cast<uint64_t>(-1) || key != static_cast<uint64_t>(-2) || key != static_cast<uint64_t>(-3)) {
+            if (key != static_cast<uint64_t>(-1) && key != static_cast<uint64_t>(-2) && key != static_cast<uint64_t>(-3)) {
                 fread(&ptr, sizeof(recordPtr), 1, fp);
                 pe_data[i].assign(key, ptr);
             } else if (key == static_cast<uint64_t>(-1)){
@@ -706,15 +694,15 @@ struct diliNode{
 //        linearReg_w_expanding(keys, a, b, num_nonempty, fanout, true);
         int last_k_id = 0;
         keyType last_key = keys[0];
-        int pos = -1;
-        int last_pos = LR_PRED(a, b, last_key, fanout);
+        size_t pos;
+        size_t last_pos = LR_PRED(a, b, last_key, fanout);
 
         keyType final_key = keys[num_nonempty - 1];
 //    int final_pos = LR_PRED(a, b, final_key, fanout);
         if (b < 0 || last_pos == LR_PRED(a, b, final_key, fanout)) {
             linearReg_w_expanding(keys, a, b, num_nonempty, fanout, true);
             last_pos = LR_PRED(a, b, last_key, fanout);
-            int final_pos = LR_PRED(a, b, final_key, fanout);
+            size_t final_pos = LR_PRED(a, b, final_key, fanout);
             assert(last_pos != final_pos);
         }
 
@@ -1003,7 +991,7 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+            if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                 keys[j] = pe.key;
                 ptrs[j++] = pe.ptr;
             } else if (pe.key == static_cast<uint64_t>(-1)) {
@@ -1030,7 +1018,7 @@ struct diliNode{
         int j = 0;
         for(int i = 0; i < fanout; ++i) {
             pairEntry &pe = pe_data[i];
-            if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+            if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                 keys[j++] = pe.key;
             } else if (pe.key == static_cast<uint64_t>(-1)) {
                 diliNode *child = pe.child;
@@ -1046,7 +1034,7 @@ struct diliNode{
             cout << "j = " << j << ", num_nonempty = " << num_nonempty << ", is_internal = " << is_internal() << endl;
             for(int i = 0; i < num_nonempty; ++i) {
                 pairEntry &pe = pe_data[i];
-                if (pe.key != static_cast<uint64_t>(-1) || pe.key != static_cast<uint64_t>(-2) || pe.key != static_cast<uint64_t>(-3)) {
+                if (pe.key != static_cast<uint64_t>(-1) && pe.key != static_cast<uint64_t>(-2) && pe.key != static_cast<uint64_t>(-3)) {
                     cout << "i = " << i << ", pe.key = " << pe.key << endl;
                 } else if (pe.key == static_cast<uint64_t>(-1)) {
                     diliNode *child = pe.child;

@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include "global_typedef.h"
 
 #ifndef DILI_FAN2LEAF_H
 #define DILI_FAN2LEAF_H
