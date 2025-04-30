@@ -61,7 +61,7 @@ struct SearchBound {
 };
 
 struct pairEntry {
-    keyType key; // key != static_cast<uint64_t>(-1) || key != static_cast<uint64_t>(-2) || key != static_cast<uint64_t>(-3): ptr is the index of the record in the data array, key == -1: ptr is a child; key < - 1: this position is empty
+    keyType key; // ptr is the index of the record in the data array, key == -1: ptr is a child; key < - 1: this position is empty
     union {recordPtr ptr; diliNode *child; fan2Leaf *fan2child; };
 
     pairEntry(): key(-3), ptr(-3) {}

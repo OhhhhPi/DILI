@@ -14,7 +14,7 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 else()
     # clang and gcc
     #    set(CMAKE_CXX_FLAGS "-lpthread -mpopcnt -O3 -march=native -Wextra -mlzcnt -mcmodel=large -fpermissive")
-    set(CMAKE_CXX_FLAGS "-lpthread -mpopcnt -g -march=native -Wextra -mlzcnt -mcmodel=large -fpermissive")
+    set(CMAKE_CXX_FLAGS "-lpthread -mpopcnt -O3 -march=native -mlzcnt -mcmodel=large -fpermissive")
 endif()
 
 add_subdirectory(src/global)
