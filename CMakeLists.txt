@@ -28,13 +28,17 @@ include_directories(src/utils)
 include_directories(src/butree)
 include_directories(src/dili)
 
-add_executable(d_test /sharenvme/usershome/lqa/Ahri/tests/dili_test.cpp)
-target_link_libraries(d_test dili_func)
-target_link_libraries(d_test butree_func)
-target_link_libraries(d_test global_func)
-target_link_libraries(d_test utils_func)
-add_executable(dt_test ../../../dili_test_throughput.cpp)
-target_link_libraries(dt_test dili_func)
-target_link_libraries(dt_test butree_func)
-target_link_libraries(dt_test global_func)
-target_link_libraries(dt_test utils_func)
+
+add_executable(dili_lookup_throughput ../../../dili_lookup_throughput.cpp)
+
+target_link_libraries(dili_lookup_throughput dili_func)
+target_link_libraries(dili_lookup_throughput butree_func)
+target_link_libraries(dili_lookup_throughput global_func)
+target_link_libraries(dili_lookup_throughput utils_func)
+
+add_executable(dili_insert_throughput ../../../dili_insert_throughput.cpp)
+
+target_link_libraries(dili_insert_throughput dili_func)
+target_link_libraries(dili_insert_throughput butree_func)
+target_link_libraries(dili_insert_throughput global_func)
+target_link_libraries(dili_insert_throughput utils_func)

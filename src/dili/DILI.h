@@ -97,8 +97,8 @@ public:
 //    root->set_range(0, all_keys[N-1] + 1);
         int n_keys = n_nodes_each_level_mirror[H - 2];
         root->fanout = n_keys + 1;
-        long ubd = split_keys_list[H-1][n_keys-1];
-        long lbd = split_keys_list[H-1][0];
+        uint64_t ubd = split_keys_list[H-1][n_keys-1];
+        uint64_t lbd = split_keys_list[H-1][0];
         root->b = 1.0 * n_keys / (ubd - lbd);
         root->a = -(root->b * lbd);
         n_nodes_each_level.push_back(1);
@@ -245,7 +245,7 @@ public:
 
 
 
-    inline long search(const keyType &key) const{
+    inline uint64_t search(const keyType &key) const{
 //        std::cout << "******key = " << key << std::endl;
 
         diliNode *node = root;

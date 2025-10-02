@@ -14,6 +14,11 @@
 #ifndef DILI_DILINODE_H
 #define DILI_DILINODE_H
 
+#ifndef NOT_ADJUST
+#define NOT_ADJUST
+#endif
+
+
 
 using namespace std;
 struct diliNode;
