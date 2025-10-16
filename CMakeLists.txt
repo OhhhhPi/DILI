@@ -42,3 +42,17 @@ target_link_libraries(dili_insert_throughput dili_func)
 target_link_libraries(dili_insert_throughput butree_func)
 target_link_libraries(dili_insert_throughput global_func)
 target_link_libraries(dili_insert_throughput utils_func)
+
+add_executable(dili_depth_test ../../../dili_depth_test.cpp)
+
+target_link_libraries(dili_depth_test dili_func)
+target_link_libraries(dili_depth_test butree_func)
+target_link_libraries(dili_depth_test global_func)
+target_link_libraries(dili_depth_test utils_func)
+
+add_executable(dili_lookup_latency ../../../dili_lookup_latency.cpp)
+
+target_link_libraries(dili_lookup_latency dili_func)
+target_link_libraries(dili_lookup_latency butree_func)
+target_link_libraries(dili_lookup_latency global_func)
+target_link_libraries(dili_lookup_latency utils_func)

@@ -276,10 +276,41 @@ public:
     inline int range_query(const keyType &k1, const keyType &k2, recordPtr *ptrs) { return root->range_query(k1, k2, ptrs); }
 
 
+    double get_average_depth() const {
+        if (!root) {
+            return 0.0;
+        }
+        uint64_t total_depth = 0;
+        uint64_t key_count = 0;
+        traverse_for_depth(root, 1, total_depth, key_count);
+        if (key_count == 0) {
+            return 0.0;
+        }
+        return static_cast<double>(total_depth) / key_count;
+    }
+
     void bulk_load(const keyArray &keys, const recordPtrArray &ptrs, long n_keys);//, const string &mirror_dir, const string &layout_conf_path, int interval_type=1);
     void bulk_load(const std::vector< pair<keyType, recordPtr> > &bulk_load_data);
-};
+private:
+    void traverse_for_depth(diliNode *node, int depth, uint64_t &total_depth, uint64_t &key_count) const {
+        if (!node || !node->pe_data) {
+            return;
+        }
 
+        for (int i = 0; i < node->fanout; ++i) {
+            pairEntry &pe = node->pe_data[i];
+            if (pe.key == static_cast<uint64_t>(-1)) { // It's a pointer to a child diliNode
+                traverse_for_depth(pe.child, depth + 1, total_depth, key_count);
+            } else if (pe.key == static_cast<uint64_t>(-2)) { // It's a pointer to a fan2Leaf
+                key_count += 2;
+                total_depth += 2 * (depth + 1);
+            } else if (pe.key != static_cast<uint64_t>(-3)) { // It's a key-ptr pair
+                key_count += 1;
+                total_depth += depth;
+            }
+        }
+    }
+};
 
 
 #endif //DILI_DILI_H
